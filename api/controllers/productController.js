@@ -4,6 +4,23 @@ const SearchFeatures = require('../utils/searchFeatures');
 const ErrorHandler = require('../utils/errorHandler');
 const cloudinary = require('cloudinary');
 
+// Filter products by category
+exports.filterProductsByCategory = asyncErrorHandler(async (req, res, next) => {
+    const { category } = req.query;
+    
+    if (!category) {
+        return next(new ErrorHandler("Please provide a category", 400));
+    }
+
+    const products = await Product.find({ category });
+    
+    res.status(200).json({
+        success: true,
+        count: products.length,
+        products
+    });
+});
+
 // Get All Products
 exports.getAllProducts = asyncErrorHandler(async (req, res, next) => {
 

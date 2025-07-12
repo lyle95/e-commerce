@@ -1,12 +1,19 @@
 const express = require('express');
-const { getAllProducts, getProductDetails, updateProduct, deleteProduct, getProductReviews, deleteReview, createProductReview, createProduct, getAdminProducts, getProducts } = require('../controllers/productController');
+const { getAllProducts, getProductDetails, updateProduct, deleteProduct, getProductReviews, deleteReview, createProductReview, createProduct, getAdminProducts, getProducts, filterProductsByCategory } = require('../controllers/productController');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/user_actions/auth');
 const { validateProduct } = require("../middlewares/validator")
 
 const router = express.Router();
 
-router.route('/products').get(getAllProducts);
+router.route('/products').get(getAllProducts); 
 router.route('/products/all').get(getProducts);
+
+
+// Get a single product by ID
+router.route('/products/:id').get(getProductDetails);
+
+// Filter products by category
+router.route('/products/filter/category').get(filterProductsByCategory);
 
 router.route('/admin/products').get(isAuthenticatedUser, authorizeRoles("admin"), getAdminProducts, validateProduct);
 router.route('/admin/product/new').post(isAuthenticatedUser, authorizeRoles("admin"), createProduct, validateProduct);
@@ -16,6 +23,7 @@ router.route('/admin/product/:id')
     .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteProduct);
 
 router.route('/product/:id').get(getProductDetails);
+
 
 router.route('/review').put(isAuthenticatedUser, createProductReview);
 

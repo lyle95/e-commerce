@@ -1,3 +1,9 @@
+// Monkey-patch for clone() support
+const mongoose = require('mongoose');
+mongoose.Query.prototype.clone = function() {
+  return this.model.find(this.getFilter());
+};
+
 const app = require('./app');
 const connectDatabase = require('./config/database');
 const cloudinary = require('cloudinary');
@@ -9,7 +15,7 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-// connectDatabase();
+ connectDatabase();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
